@@ -1,4 +1,4 @@
-### Continuous Exposure Learning for Low-light Image Enhancement using Neural ODEs (ICLR 2025 spotlight)
+### Continuous Exposure Learning for Low-light Image Enhancement using Neural ODEs <br> (ICLR 2025 spotlight)
 Donggoo Jung*, Daehyun Kim*, Tae Hyun Kim
 <br>\*Equal Contribution
 
