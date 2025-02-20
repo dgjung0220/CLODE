@@ -1,9 +1,14 @@
 ### Continuous Exposure Learning for Low-light Image Enhancement using Neural ODEs <br> (ICLR 2025 Spotlight)
-Donggoo Jung*, [Daehyun Kim*](https://github.com/kdhRick2222), Tae Hyun Kim (\*Equal Contribution)
+
+This repository is the official implementation of "Continuous Exposure Learning for Low-light Image Enhancement using Neural ODEs" @ ICLR25.
+
+Donggoo Jung*, [Daehyun Kim*](https://github.com/kdhRick2222), [Tae Hyun Kim](https://scholar.google.co.kr/citations?user=8soccsoAAAAJ) (\*Equal Contribution)
 
 [[ICLR2025] Paper](https://openreview.net/forum?id=Mn2qgIcIPS)
 
+## Method
 ![Main_Fig.](assets/main_figure.png)
+We propose the unsupervised low-light image enhancement problem by reframing discrete iterative curve-adjustment methods into a continuous space using Neural Ordinary Differential Equations (NODE).
 
 | Under-exposure | Over-exposure | Normal-exposure | 
 | :------------: | :-----------: | :-------------: |
@@ -27,8 +32,9 @@ Donggoo Jung*, [Daehyun Kim*](https://github.com/kdhRick2222), Tae Hyun Kim (\*E
 ```
 
 ## Results
-We provide our results for the LOL and SICE Part2 dataset. (CLODE/**CLODE**$\dagger$)
+![Main_Fig.](assets/result_figure.png)
 
+We provide our results for the LOL and SICE Part2 dataset. (CLODE/**CLODE**$\dagger$)
 | Dataset | PSNR | SSIM | Images|
 | :------:| :---:| :---:| :---: |
 | LOL | 19.61/**23.58** | 0.718/**0.754** | [Link]() |
