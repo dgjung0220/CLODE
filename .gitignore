@@ -170,5 +170,5 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-.create_video.ipynb
+create_video.ipynb
 /assets/video
