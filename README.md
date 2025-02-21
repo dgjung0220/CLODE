@@ -21,7 +21,7 @@ We propose the unsupervised low-light image enhancement problem by reframing dis
 
 ## Evaluation
 
-Download the pre-trained model and place it in ``./pth/``
+Download the pre-trained [model]() and place it in ``./pth/``
 
 ```bash
 # In inference.py, only modify the following paths:
