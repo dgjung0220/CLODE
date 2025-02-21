@@ -172,3 +172,4 @@ cython_debug/
 
 create_video.ipynb
 /assets/video
+/pth
