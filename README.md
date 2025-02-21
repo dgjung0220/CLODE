@@ -2,7 +2,7 @@
 
 This repository is the official implementation of "Continuous Exposure Learning for Low-light Image Enhancement using Neural ODEs" @ ICLR25.
 
-Donggoo Jung*, [Daehyun Kim*](https://github.com/kdhRick2222), [Tae Hyun Kim](https://scholar.google.co.kr/citations?user=8soccsoAAAAJ) $^\dagger$  (\*Equal Contribution, $^\dagger$ Corresponding author)
+Donggoo Jung*, [Daehyun Kim](https://github.com/kdhRick2222)*, [Tae Hyun Kim](https://scholar.google.co.kr/citations?user=8soccsoAAAAJ) $^\dagger$  (\*Equal Contribution, $^\dagger$ Corresponding author)
 
 [[ICLR2025] Paper](https://openreview.net/forum?id=Mn2qgIcIPS)
 
@@ -14,14 +14,9 @@ We propose the unsupervised low-light image enhancement problem by reframing dis
 | :------------: | :-----------: | :-------------: |
 | <video src="https://github.com/dgjung0220/CLODE/assets/-" /> | <video src="https://github.com/dgjung0220/CLODE/assets/-" /> | <video src="https://github.com/dgjung0220/CLODE/assets/-" /> |
 
-## TODO:
-
-- Create notebook for Controllability
-  
-
 ## Evaluation
 
-Download the pre-trained [model]() and place it in ``./pth/``
+Download the pre-trained [model](https://drive.google.com/drive/folders/1E1Oi89TJeZIL4pz7d4p-D_Yq1rAG4Uhc?usp=drive_link) and place it in ``./pth/``
 
 ```bash
 # In inference.py, only modify the following paths:
