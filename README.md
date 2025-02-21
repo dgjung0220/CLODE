@@ -62,3 +62,6 @@ If you find our work useful in your research, please consider citing our paper.
   year={2025},
 }
 ```
+
+## Acknowledgement
+We are using [torchdiffeq](https://github.com/rtqichen/torchdiffeq) as the Neural ODEs library. We thank the author for sharing their codes.
