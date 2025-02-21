@@ -2,7 +2,7 @@
 
 This repository is the official implementation of "Continuous Exposure Learning for Low-light Image Enhancement using Neural ODEs" @ ICLR25.
 
-Donggoo Jung*, [Daehyun Kim*](https://github.com/kdhRick2222), [Tae Hyun Kim$^\dagger$](https://scholar.google.co.kr/citations?user=8soccsoAAAAJ) (\*Equal Contribution, $^\dagger$Corresponding author)
+Donggoo Jung*, [Daehyun Kim*](https://github.com/kdhRick2222), [Tae Hyun Kim](https://scholar.google.co.kr/citations?user=8soccsoAAAAJ) $^\dagger$  (\*Equal Contribution, $^\dagger$ Corresponding author)
 
 [[ICLR2025] Paper](https://openreview.net/forum?id=Mn2qgIcIPS)
 
