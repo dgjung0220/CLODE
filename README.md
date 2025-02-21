@@ -12,11 +12,11 @@ We propose the unsupervised low-light image enhancement problem by reframing dis
 
 | Under-exposure | Over-exposure | Normal-exposure | 
 | :------------: | :-----------: | :-------------: |
-| <video src="https://github.com/dgjung0220/CLODE/assets/-" /> | <video src="https://github.com/dgjung0220/CLODE/assets/-" /> | <video src="https://github.com/dgjung0220/CLODE/assets/-" /> |
+| <video src="https://github.com/dgjung0220/CLODE/assets/-" /> | <video src="https://github.com/dgjung0220/CLODE/assets/-" /> | <video src="https://github.com/dgjung0220/CLODE/assets/video/test_1.mp4" /> |
 
 ## Evaluation
 
-Download the pre-trained [model](https://drive.google.com/drive/folders/1E1Oi89TJeZIL4pz7d4p-D_Yq1rAG4Uhc?usp=drive_link) and place it in ``./pth/``
+Download the pre-trained [model](https://drive.google.com/drive/folders/1E1Oi89TJeZIL4pz7d4p-D_Yq1rAG4Uhc?usp=drive_link) and place it in ``./pth/``.
 
 ```bash
 # In inference.py, only modify the following paths:
@@ -29,6 +29,8 @@ $ python inference.py
 ```
 
 ## User Controllablity
+![Main_Fig.](assets/user_control.png)
+
 CLODE learns the low-light exposure adjustment mechanism in the continuous-space, and is trained to output $I_T$ by integrating the states from $0$ to $T$ using a fixed $T=3$. However, users can manually adjust the integration interval by changing the final state value $T$ at the test stage, allowing them to output images with the preferred exposure level and even produce images darker than the input. In practice, by controlling the final state from $-(T+\Delta t)$ to $(T+\Delta t)$, the exposure level of the output image can be easily controlled to provide a more user-friendly exposure level. 
 
 ```bash
@@ -64,4 +66,4 @@ If you find our work useful in your research, please consider citing our paper.
 ```
 
 ## Acknowledgement
-We are using [torchdiffeq](https://github.com/rtqichen/torchdiffeq) as the Neural ODEs library. We thank the author for sharing their codes.
+We are using [*torchdiffeq*](https://github.com/rtqichen/torchdiffeq) as the Neural ODEs library. We thank the author for sharing their codes.

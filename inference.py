@@ -15,8 +15,8 @@ parser.add_argument('--T', type=float, required=False, default=3)
 args = parser.parse_args()
 
 integration_time = torch.tensor([0, args.T]).float().cuda()
-file_path = '/path/to/your/input'
-gt_path = '/path/to/your/corresponding_gt'
+file_path = '/home/dgjung/dataset/LOLv1/eval15/input'
+gt_path = '/home/dgjung/dataset/LOLv1/eval15/target'
 
 lq_imgs, gt_imgs = get_filelist(file_path, gt_path)
 psnr_results, ssim_results = [], []
