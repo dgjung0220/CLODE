@@ -16,7 +16,7 @@ def image_tensor(image_path, size=None):
     img = (np.asarray(img)/255.0)
     img = torch.from_numpy(img).float()
     img = img.permute(2,0,1)
-    # img = img.cuda().unsqueeze(0)
+    img = img.cuda().unsqueeze(0)
     return img
 
 def get_filelist(input_path, gt_path=None, size=None):
