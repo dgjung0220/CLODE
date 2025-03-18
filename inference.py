@@ -16,68 +16,53 @@ model.load_state_dict(torch.load(f'pth/universal.pth', weights_only=True), stric
 
 file_path = Path('/data/soom/LSRW/eval/Huawei')
 img_labels = sorted(os.listdir(file_path / 'low'))
-batch_size = 16
 
-def load_images(start_idx, batch_size):
-    lq_imgs, gt_imgs = [], []
-    for label in img_labels[start_idx:start_idx+batch_size]:
-        lq_imgs.append(image_tensor(file_path / 'low' / label, size=(256, 256)))
-        gt_imgs.append(image_tensor(file_path / 'high' / label, size=(256, 256)))
+def load_image(idx):
+    lq_img = image_tensor(file_path / 'low' / img_labels[idx], size=(256, 256))
+    gt_img = image_tensor(file_path / 'high' / img_labels[idx], size=(256, 256))
     
-    return torch.stack(lq_imgs).cuda(), torch.stack(gt_imgs).cuda()
+    return lq_img.to(device), gt_img.to(device)
 
-psnr_results, ssim_results, clip_scores, clip_av_scores = [], [], [], []
-T_values = np.linspace(0.1, 10, 100)  # Adjust T value
+psnr_results, ssim_results, clip_scores_0, clip_scores_1 = [], [], [], []
+T_values = np.linspace(0.1, 6, 100)  # Adjust T value
 
-clip_iqa = CLIPImageQualityAssessment(prompts=("quality", "brightness")).to(device)
+prompts = (('good exposure', 'bad exposure'), ('good exposure', 'under or over exposure'))
+clip_iqa = CLIPImageQualityAssessment(prompts=prompts).to(device)
 
-def calculate_clip_score(preds):
-    score = clip_iqa(preds)
-    score_np = score['quality'].detach().cpu().numpy()
-    score_np_av = score_np + score['brightness'].detach().cpu().numpy()
+def calculate_clip_score(pred):
+    score = clip_iqa(pred.unsqueeze(0))
     
-    return score_np, score_np_av
+    return score['user_defined_0'].item()
+
+# 30개 이미지에 대해, [0.1, 6.0] 구간 T 100개 계산 => 각 이미지의 최적 T값과, 그때의 PSNR / SSIM / CLIP IQA score 저장.
+# inference -> clip_score 계산 -> score 상위 4개 T 값에 대해 T / PSNR / SSIM / CLIP IQA score 저장 (30 * 4 * 4)
+total_psnr, total_ssim = 0.0, 0.0
+best_Ts = np.zeros((len(img_labels), 4, 4), dtype=float)
 
 with torch.no_grad():
-    for T in T_values:
-        integration_time = torch.tensor([0, T]).float().cuda()
-        temp_psnr, temp_ssim = [], []
-        temp_clip, temp_clip_av = np.array([]), np.array([])
-        
-        for start_idx in tqdm(range(0, len(img_labels), batch_size)):
-            lq_imgs, gt_imgs = load_images(start_idx, batch_size)
-            out = model(lq_imgs, integration_time, inference=True)       
-            preds = out['output']
-            
-            for i in range(len(preds)):
-                val1 = calculate_psnr(preds[i], gt_imgs[i]).item()
-                val2 = calculate_ssim(preds[i], gt_imgs[i]).item()
-                temp_psnr.append(val1)
-                temp_ssim.append(val2)
-            val3, val4 = calculate_clip_score(preds)
-            temp_clip = np.concatenate((temp_clip, val3))
-            temp_clip_av = np.concatenate((temp_clip_av, val4))
+    for idx in tqdm(range(len(img_labels))):
+        lq_img, gt_img = load_image(idx)
+        img_values = []
 
-        psnr_results.append(np.mean(temp_psnr))
-        ssim_results.append(np.mean(temp_ssim))
-        clip_scores.append(np.mean(temp_clip))
-        clip_av_scores.append(np.mean(temp_clip_av) / 2)
+        for T in tqdm(T_values):
+            integration_time = torch.tensor([0, T]).float().cuda()
+            pred = model(lq_img, integration_time, inference=True)['output'][0]
+            
+            _psnr = calculate_psnr(pred, gt_img).item()
+            _ssim = calculate_ssim(pred, gt_img).item()
+            _clip_score = calculate_clip_score(pred)
+            
+            img_values.append((T, _psnr, _ssim, _clip_score))
+
+        # score 상위 4개에 대한 T / PSNR / SSIM / CLIP IQA score 저장
+        img_values = np.array(img_values)
+        best_idx_0 = np.argsort(img_values[:, 3])[::-1][:4]
+        best_Ts[idx] = np.array(img_values[best_idx_0, :])
+        # score 1위 T에 대한 PSNR, SSIM은 따로 합산
+        total_psnr += best_Ts[idx, 0, 1]
+        total_ssim += best_Ts[idx, 0, 2]
 
 # Plotting the results
-plt.figure(figsize=(10, 6))
-plt.plot(T_values, psnr_results, label='PSNR')
-plt.plot(T_values, ssim_results, label='SSIM')
-plt.plot(T_values, clip_scores, label='CLIP IQA')
-plt.plot(T_values, clip_av_scores, label='CLIP IQA (avg)')
-plt.xlabel('T values')
-plt.ylabel('Scores')
-plt.legend()
-plt.title('PSNR, SSIM, and CLIP IQA Scores vs T values')
-plt.show()
-plt.savefig('score_result.png')
-
-# Print the T value with the highest CLIP IQA score
-max_clip_iqa_idx = np.argmax(clip_scores)
-max_clip_iqa_idx_av = np.argmax(clip_av_scores)
-print(f'Max CLIP IQA Score: {clip_scores[max_clip_iqa_idx]:.2f} at T={T_values[max_clip_iqa_idx]:.2f}')
-print(f'Max CLIP IQA Score (avg): {clip_av_scores[max_clip_iqa_idx_av]:.2f} at T={T_values[max_clip_iqa_idx_av]:.2f}')
+np.save('best_Ts.npy', best_Ts)
+print(f'Average PSNR: {total_psnr / len(img_labels):.2f}')
+print(f'Average SSIM: {total_ssim / len(img_labels):.2f}')
