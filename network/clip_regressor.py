@@ -7,6 +7,7 @@ import torch.nn.functional as F
 class TtoTRegressor(nn.Module):
     def __init__(self, input_dim=3, hidden_dim=64):
         super(TtoTRegressor, self).__init__()
+        self.input_dim = input_dim
         self.mlp = nn.Sequential(
             nn.Linear(input_dim, hidden_dim),
             nn.ReLU(),
@@ -24,7 +25,7 @@ class TtoTRegressor(nn.Module):
         )
 
     def forward(self, x):
-        batch_size, T, features = x.shape
+        # _, _, features = x.shape # (batch_size, T, features)
         x = self.mlp(x)  # (batch_size, T, hidden_dim)
         
         x = x.permute(1, 0, 2)  # T, batch_size, hidden_dim)
