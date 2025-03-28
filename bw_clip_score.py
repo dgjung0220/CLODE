@@ -37,7 +37,7 @@ def load_image(idx):
     return lq_img.to(device), gt_img.to(device)
 
 
-prompts = ('brightness', 'noisiness', 'quality', 'contrast')  # 단순 튜플로 변경
+prompts = ('brightness', 'noisiness', 'quality')  # 단순 튜플로 변경
 
 clip_metric = CLIPImageQualityAssessment(
     model_name_or_path="openai/clip-vit-base-patch16",
@@ -57,13 +57,13 @@ def calculate_clip_score(pred, prompts=prompts):
     return scores[prompts[0]].item(), scores[prompts[1]].item(), scores[prompts[2]].item(), scores[prompts[3]].item()
 
 # 메인 루프 최적화
-T_values = np.linspace(2, 5, 30)
+T_values = np.linspace(2, 5, 31)
 
 results = []
 brightness_scores = []
 noisiness_scores = []
 quality_scores = []
-contrast_scores = []
+# contrast_scores = []
 
 # T 값들을 먼저 텐서로 변환하여 반복 변환 방지
 T_tensors = [torch.tensor([0, T]).float().cuda() for T in T_values]
@@ -90,15 +90,15 @@ with torch.no_grad():
         
         # 모든 예측에 대해 CLIP 점수 계산
         for i, pred in enumerate(preds):
-            bright_score, noise_score, quality_score, contrast_score = calculate_clip_score(pred)
+            bright_score, noise_score, quality_score = calculate_clip_score(pred)
             brightness_scores.append([idx, T_values[i], bright_score])
             noisiness_scores.append([idx, T_values[i], noise_score])
             quality_scores.append([idx, T_values[i], quality_score])
-            contrast_scores.append([idx, T_values[i], contrast_score])
+            # contrast_scores.append([idx, T_values[i], contrast_score])
         
         results.append([best_T, high_psnr])
 
-save_path = Path('/home/lbw/CLODE/scores_csv_4prompts_400600')
+save_path = Path('/home/lbw/CLODE/scores_csv_46_31')
 save_path.mkdir(parents=True, exist_ok=True)
 
 results = np.array(results)
@@ -107,9 +107,9 @@ np.save(Path(save_path / 'results.npy'), results)
 brightness_scores = np.array(brightness_scores)
 noisiness_scores = np.array(noisiness_scores)
 quality_scores = np.array(quality_scores)
-contrast_scores = np.array(contrast_scores)
+# contrast_scores = np.array(contrast_scores)
 
 np.save(Path(save_path / 'brightness_scores.npy'), brightness_scores)
 np.save(Path(save_path / 'noisiness_scores.npy'), noisiness_scores)
 np.save(Path(save_path / 'quality_scores.npy'), quality_scores)
-np.save(Path(save_path / 'contrast_scores.npy'), contrast_scores)
+# np.save(Path(save_path / 'contrast_scores.npy'), contrast_scores)
