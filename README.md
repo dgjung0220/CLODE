@@ -2,7 +2,7 @@
 
 This repository is the official implementation of "Continuous Exposure Learning for Low-light Image Enhancement using Neural ODEs" @ ICLR25.
 
-Donggoo Jung*, [Daehyun Kim](https://github.com/kdhRick2222)*, [Tae Hyun Kim](https://scholar.google.co.kr/citations?user=8soccsoAAAAJ) $^\dagger$  (\*Equal Contribution, $^\dagger$ Corresponding author)
+Donggoo Jung*, [Daehyun Kim](https://github.com/kdhRick2222)*, [Tae Hyun Kim](https://scholar.google.co.kr/citations?user=8soccsoAAAAJ) $^\dagger$  (\*Equal Contribution)
 
 [[ICLR2025] Paper](https://openreview.net/forum?id=Mn2qgIcIPS)
 
@@ -34,8 +34,8 @@ $ python inference.py
 CLODE learns the low-light exposure adjustment mechanism in the continuous-space, and is trained to output $I_T$ by integrating the states from $0$ to $T$ using a fixed $T=3$. However, users can manually adjust the integration interval by changing the final state value $T$ at the test stage, allowing them to output images with the preferred exposure level and even produce images darker than the input. In practice, by controlling the final state from $-(T+\Delta t)$ to $(T+\Delta t)$, the exposure level of the output image can be easily controlled to provide a more user-friendly exposure level. 
 
 ```bash
-$ python inference.py --T 4.8    # set to 3.5, more brighten
-$ python inference.py --T -1.4   # set to -1.4, more darken
+$ python inference.py --T 4.8    # set to 3.5, more brighter
+$ python inference.py --T -1.4   # set to -1.4, more darker
 $ python inference.py --T 2.5    # set to 2.5, Adjust to the brightness desired by the user
 ```
 
