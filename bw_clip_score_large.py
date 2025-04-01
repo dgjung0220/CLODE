@@ -41,17 +41,10 @@ prompts = ('brightness', 'noisiness', 'quality')  # 단순 튜플로 변경
 # prompts = ('darkness')
 
 clip_metric = CLIPImageQualityAssessment(
-    model_name_or_path="openai/clip-vit-base-patch16",
+    # model_name_or_path="openai/clip-vit-base-patch16",
+    model_name_or_path="openai/clip-vit-large-patch14",
     prompts=prompts  # 이미 적절한 형식을 가진 튜플
 ).to(device)
-
-clip_vision_encoder = clip_metric.model.vision_model
-clip_vision_encoder.eval()
-clip_vision_encoder.to(device)
-
-clip_visual_projection = clip_metric.model.visual_projection
-clip_visual_projection.eval()
-clip_visual_projection.to(device)
 
 def calculate_clip_score(pred, prompts=prompts):    
     # 이미 배치 차원이 있는지 확인하고 없으면 추가
@@ -60,15 +53,18 @@ def calculate_clip_score(pred, prompts=prompts):
     
     with torch.no_grad():
         # 한 번의 forward pass로 모든 프롬프트에 대한 점수를 계산
-        encoder_feature = clip_vision_encoder(pred) # Pooler Output: torch.Size([1, 768])
-        projection = clip_visual_projection(encoder_feature[1]) # image projection: torch.Size([1, 512])
+        scores = clip_metric(pred)
 
-    return projection
+    # 결과 반환 (scores는 리스트 형태로 반환됨)
+    return scores[prompts[0]].item(), scores[prompts[1]].item(), scores[prompts[2]].item()
+
 
 # 메인 루프 최적화
 # T_values = np.linspace(2, 5, 31)
 
-clip_features = []
+brightness_scores = []
+noisiness_scores = []
+quality_scores = []
 # contrast_scores = []
 
 # T 값들을 먼저 텐서로 변환하여 반복 변환 방지
@@ -84,12 +80,20 @@ with torch.no_grad():
         # preds = []
         # psnrs = []
 
-        clip_output = calculate_clip_score(lq_img)
+        bright_score, noise_score, quality_score = calculate_clip_score(lq_img)
+        brightness_scores.append([bright_score])
+        noisiness_scores.append([noise_score])
+        quality_scores.append([quality_score])
         
-        clip_features.append([clip_output.cpu().numpy()])
+        # clip_features.append([clip_output.cpu().numpy()])
 
 save_path = Path('./scores_csv_4prompts_400600')
 save_path.mkdir(parents=True, exist_ok=True)
 
-clip_features = np.array(clip_features)
-np.save(Path(save_path / 'clip_features.npy'), clip_features)
+brightness_scores = np.array(brightness_scores)
+noisiness_scores = np.array(noisiness_scores)
+quality_scores = np.array(quality_scores)
+
+np.save(Path(save_path / 'brightness_scores_L.npy'), brightness_scores)
+np.save(Path(save_path / 'noisiness_scores_L.npy'), noisiness_scores)
+np.save(Path(save_path / 'quality_scores_L.npy'), quality_scores)
