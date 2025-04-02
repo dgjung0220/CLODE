@@ -176,3 +176,6 @@ test.ipynb
 
 lbw_outputs/
 lbw_low_score_model/
+
+regression_pth/
+result_img/
