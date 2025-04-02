@@ -9,11 +9,11 @@ import matplotlib.pyplot as plt
 from torchmetrics.multimodal import CLIPImageQualityAssessment
 import time
 
-# # GPU 번호 지정
-# gpu_number = 3  # 원하는 GPU 번호로 변경 가능
+# GPU 번호 지정
+gpu_number = 3  # 원하는 GPU 번호로 변경 가능
 
-# # GPU 사용 제한
-# os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_number)
+# GPU 사용 제한
+os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_number)
 
 # 이제 GPU가 한 개만 보이므로 cuda:0으로 접근
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -22,9 +22,9 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 model = NODE(device, (3, 400, 600), 32, augment_dim=0, time_dependent=True, adjoint=True)
 model.eval()
 model.to(device)
-model.load_state_dict(torch.load(f'./pth/lowlight.pth', weights_only=True), strict=False)
+model.load_state_dict(torch.load(f'/home/lbw/CLODE/pth/lowlight.pth', weights_only=True), strict=False)
 
-file_path = Path('./data/LOLdataset/our485')
+file_path = Path('/home/lbw/data/our485')
 # img_labels = sorted(os.listdir(file_path / 'low'))
 img_labels = [f for f in sorted(os.listdir(file_path / 'low')) if f.lower().endswith('.png')]
 
@@ -89,7 +89,7 @@ with torch.no_grad():
         
         clip_features.append([clip_output.cpu().numpy()])
 
-save_path = Path('./scores_csv_4prompts_400600')
+save_path = Path('/home/lbw/CLODE/scores_csv_4prompts_400600')
 save_path.mkdir(parents=True, exist_ok=True)
 
 clip_features = np.array(clip_features)

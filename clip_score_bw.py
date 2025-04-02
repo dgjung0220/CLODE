@@ -22,7 +22,7 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 model = NODE(device, (3, 400, 600), 32, augment_dim=0, time_dependent=True, adjoint=True)
 model.eval()
 model.to(device)
-model.load_state_dict(torch.load(f'/home/lbw/CLODE/pth/universal.pth', weights_only=True), strict=False)
+model.load_state_dict(torch.load(f'/home/lbw/CLODE/pth/lowlight.pth', weights_only=True), strict=False)
 
 file_path = Path('/home/lbw/data/our485')
 # img_labels = sorted(os.listdir(file_path / 'low'))
@@ -40,7 +40,8 @@ def load_image(idx):
 prompts = ('brightness', 'noisiness', 'quality')  # 단순 튜플로 변경
 
 clip_metric = CLIPImageQualityAssessment(
-    model_name_or_path="openai/clip-vit-base-patch16",
+    # model_name_or_path="openai/clip-vit-base-patch16",
+    model_name_or_path="openai/clip-vit-large-patch14",
     prompts=prompts  # 이미 적절한 형식을 가진 튜플
 ).to(device)
 
@@ -54,10 +55,10 @@ def calculate_clip_score(pred, prompts=prompts):
         scores = clip_metric(pred)
 
     # 결과 반환 (scores는 리스트 형태로 반환됨)
-    return scores[prompts[0]].item(), scores[prompts[1]].item(), scores[prompts[2]].item(), scores[prompts[3]].item()
+    return scores[prompts[0]].item(), scores[prompts[1]].item(), scores[prompts[2]].item()
 
 # 메인 루프 최적화
-T_values = np.linspace(2, 5, 31)
+T_values = np.linspace(2, 5, 30)
 
 results = []
 brightness_scores = []
@@ -98,7 +99,7 @@ with torch.no_grad():
         
         results.append([best_T, high_psnr])
 
-save_path = Path('/home/lbw/CLODE/scores_csv_46_31')
+save_path = Path('/home/lbw/CLODE/scores_csv_46_L')
 save_path.mkdir(parents=True, exist_ok=True)
 
 results = np.array(results)

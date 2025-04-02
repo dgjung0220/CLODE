@@ -22,9 +22,9 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 model = NODE(device, (3, 400, 600), 32, augment_dim=0, time_dependent=True, adjoint=True)
 model.eval()
 model.to(device)
-model.load_state_dict(torch.load(f'./pth/lowlight.pth', weights_only=True), strict=False)
+model.load_state_dict(torch.load(f'/home/lbw/CLODE/pth/lowlight.pth', weights_only=True), strict=False)
 
-file_path = Path('./data/LOLdataset/our485')
+file_path = Path('/home/lbw/data/our485')
 # img_labels = sorted(os.listdir(file_path / 'low'))
 img_labels = [f for f in sorted(os.listdir(file_path / 'low')) if f.lower().endswith('.png')]
 
@@ -87,7 +87,7 @@ with torch.no_grad():
         
         # clip_features.append([clip_output.cpu().numpy()])
 
-save_path = Path('./scores_csv_4prompts_400600')
+save_path = Path('/home/lbw/CLODE/scores_csv_4prompts_400600')
 save_path.mkdir(parents=True, exist_ok=True)
 
 brightness_scores = np.array(brightness_scores)
