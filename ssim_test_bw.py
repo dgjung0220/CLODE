@@ -7,7 +7,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = NODE(device, (3, 400, 600), 32, augment_dim=0, time_dependent=True, adjoint=True)
 model.eval()
 model.to(device)
-model.load_state_dict(torch.load(f'pth/lowlight.pth'), strict=False)
+model.load_state_dict(torch.load(f'/home/lbw/CLODE/pth/sice.pth', weights_only=True), strict=False)
 
 import argparse
 parser = argparse.ArgumentParser(description="CLODE")
@@ -17,8 +17,8 @@ args = parser.parse_args()
 print(args.T)
 
 integration_time = torch.tensor([0, args.T]).float().cuda()
-file_path = './data/LOLdataset/eval15/low'
-gt_path = './data/LOLdataset/eval15/high'
+file_path = '/home/lbw/data/SICE/sice_over_under/input'
+gt_path = '/home/lbw/data/SICE/sice_over_under/label'
 
 lq_imgs, gt_imgs = get_filelist(file_path, gt_path)
 psnr_results, ssim_results = [], []
